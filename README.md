@@ -1,45 +1,96 @@
-# Repeat Studio
+<div align="center">
 
-A standalone Windows app for automatic clicking, recording and replaying mouse and keyboard actions, and finding images on screen. I've made it totally for personal use, I'm just sharing in case someone needs something like this.
+![Repeat Studio](src/assets/logo.png)
 
-## Run
+# 🌸 Repeat Studio
 
-Download and extract RepeatStudio-Windows-x64.zip, then open RepeatStudio.exe. The app is self-contained; no separate .NET installation is required. Built for Windows x64.
+**A simple, customizable Windows automation tool.**
 
-## Controls
+Auto-clicking • Input Recording • Image Recognition
 
-- F8: start or finish recording.
-- F9: start the selected action.
-- F10: stop.
-- Ctrl+V: paste a target image on the Image search page.
+</div>
 
-Recordings and pasted images last for the current session. Preferences are saved in %LOCALAPPDATA%\RepeatStudio.
+## 💗 About
 
-## Sharing on GitHub
+Repeat Studio is a standalone Windows application for automating mouse clicks, recording and replaying mouse and keyboard actions, and finding images on your screen.
 
-Use this README as the repository description and attach RepeatStudio-Windows-x64.zip to a GitHub Release so people can download the app. RepeatStudio.exe is also included here for direct use.
+I originally created this application entirely for personal use. I'm sharing it in case someone else finds it useful!
 
-The current WPF source code and artwork are included in src/.
-## Build from source
+## ✨ Features
 
-Building from source requires the .NET 10 SDK on Windows. [Download the .NET 10 SDK for Windows x64 (10.0.403)](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/sdk-10.0.403-windows-x64-installer).
+* 🖱️ **Simple Clicker:** Automatically click at customizable intervals.
+* 🔴 **Recorded Clicker:** Record mouse and keyboard actions and replay them.
+* 🔍 **Image Search:** Find matching images on your screen.
+* 🔁 **Custom Repetitions:** Repeat actions a specific number of times or indefinitely.
+* ⌨️ **Global Hotkeys:** Control automation without switching windows.
+* 🛑 **Emergency Stop:** Immediately stop running automation.
+* 🌸 **Custom Interface:** A pastel-themed interface built using WPF.
 
-The standalone RepeatStudio.exe includes the runtime and does not require a separate .NET installation.
+## 📥 Installation
 
-After installing the SDK, run from this folder:
+1. Open the **Releases** section of this repository.
+2. Download `RepeatStudio-Windows-x64.zip`.
+3. Extract the ZIP file.
+4. Launch `RepeatStudio.exe`.
+
+That's it!
+
+**Requirements:**
+
+* Windows 64-bit
+* No separate .NET installation required
+
+The distributed application is self-contained.
+
+## ⌨️ Keyboard Shortcuts
+
+| Shortcut | Action                           |
+| -------- | -------------------------------- |
+| F8       | Start/stop recording             |
+| F9       | Start the selected action        |
+| F10      | Emergency stop                   |
+| Ctrl + V | Paste an image into Image Search |
+
+## ⚙️ Settings
+
+Application preferences are stored in:
+
+`%LOCALAPPDATA%\RepeatStudio`
+
+Recordings and pasted images are temporary and remain available only during the current session.
+
+## 🛠️ Building from Source
+
+Repeat Studio is built using **C# and WPF on .NET 10**.
+
+To compile the application yourself, install the .NET 10 SDK.
+
+Clone this repository and run:
 
 ```powershell
 dotnet build src/Wpf/RepeatStudio.Wpf.csproj -c Release
 ```
 
-To run the app directly from source, run this command from this folder:
+To launch it:
 
 ```powershell
 dotnet run --project src/Wpf/RepeatStudio.Wpf.csproj -c Release
 ```
 
-To create a standalone Windows x64 app:
+### Creating a standalone executable
 
 ```powershell
-dotnet publish src/Wpf/RepeatStudio.Wpf.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -p:DebugType=None -p:DebugSymbols=false -o dist
+dotnet publish src/Wpf/RepeatStudio.Wpf.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -o dist
 ```
+
+The compiled application will be placed in the `dist` directory.
+
+---
+
+<div align="center">
+
+Made with 💗 and very little experimenting.
+
+**Enjoy Repeat Studio! 🌸**
+
+</div>
