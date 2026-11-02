@@ -1,0 +1,8 @@
+**/bin/
+**/obj/
+.vs/
+*.user
+*.suo
+dist/
+RepeatStudio.exe
+RepeatStudio-Windows-x64.zip
