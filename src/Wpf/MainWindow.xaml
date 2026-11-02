@@ -50,7 +50,15 @@
       </StackPanel>
       <StackPanel x:Name="imagePage" Visibility="Collapsed">
        <Grid Margin="0,20,0,10"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="166"/></Grid.ColumnDefinitions><Button x:Name="pasteImage" Content="Paste image" Click="Paste" VerticalAlignment="Top"/><Button x:Name="findImage" Grid.Column="1" Content="Search &amp; click" Click="Start" VerticalAlignment="Top"/><Border Grid.Column="2" BorderBrush="#B38CB4" BorderThickness="1" Height="95" Margin="8,0,8,0"><Image x:Name="preview" Stretch="Uniform" AutomationProperties.Name="Target image preview"/></Border></Grid>
-       <TextBlock Text="Copy a cropped image, then paste here (Ctrl+V). Searches at original size. Keeps searching until found, then clicks your chosen position. F10 cancels." Margin="0,0,8,16"/>
+       <TextBlock Text="Copy a cropped image, then paste here (Ctrl+V). Searches at original size. Each match clicks your chosen position and counts as one repetition. Frequency sets the wait between search attempts. F10 cancels." Margin="0,0,8,16"/>
+       <Grid Margin="0,0,8,16">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+        <Grid.RowDefinitions><RowDefinition Height="46"/><RowDefinition Height="46"/></Grid.RowDefinitions>
+        <TextBlock Text="Repetitions (0 = infinite)"/>
+        <c:NumberBox x:Name="imageRepeats" Grid.Column="1" Text="1" AutomationProperties.Name="Image search repetitions"/>
+        <TextBlock Grid.Row="1" Text="Frequency (seconds)"/>
+        <c:NumberBox x:Name="imageFrequency" Grid.Row="1" Grid.Column="1" Text="0.5" Minimum="0.001" Maximum="3600" Increment="0.1" AllowFraction="True" AutomationProperties.Name="Image search interval in seconds"/>
+       </Grid>
        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="174"/></Grid.ColumnDefinitions><CheckBox x:Name="limitArea" Content="Search only in selected area" Checked="AreaChecked"/><Button x:Name="chooseArea" Grid.Column="1" Content="Choose area..." Click="ChooseArea"/></Grid>
        <TextBlock x:Name="areaInfo" Text="No area selected" Margin="0,0,0,16"/>
        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="174"/></Grid.ColumnDefinitions><CheckBox x:Name="fixedClick" Content="Click a fixed screen position" Checked="PositionChecked"/><Button x:Name="chooseClick" Grid.Column="1" Content="Choose position..." Click="ChoosePosition"/></Grid>

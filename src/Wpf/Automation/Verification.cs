@@ -34,6 +34,15 @@ partial class AutomationEngine {
     if(down!=1||up!=1||cursorX!=area.X+6||cursorY!=area.Y+6)throw new Exception("Image center matching or click dispatch failed");
     var point=new System.Drawing.Point(area.X+18,area.Y+18);await Search(template,area,point,()=>{});
     if(down!=2||up!=2||cursorX!=point.X||cursorY!=point.Y)throw new Exception("Fixed image click position failed");
+    var clicks=new System.Collections.Generic.List<long>();var timer=Stopwatch.StartNew();
+    InputObserved=(kind,flags,data)=>{if(kind=="mouse"&&flags==2){down++;clicks.Add(timer.ElapsedMilliseconds);}if(kind=="mouse"&&flags==4)up++;};
+    await Search(template,area,null,()=>{},3,120);
+    if(down!=5||up!=5||clicks.Count!=3||clicks[1]-clicks[0]<115||clicks[2]-clicks[1]<115)throw new Exception("Repeated image click count or frequency failed");
+    int imageBefore=down;var repeatSearch=Search(template,area,null,()=>{},0,2000);var imageDeadline=Stopwatch.StartNew();
+    while(down==imageBefore&&imageDeadline.ElapsedMilliseconds<6000)await Task.Delay(25);
+    var cancellation=Stopwatch.StartNew();Stop();await repeatSearch;
+    if(down!=imageBefore+1||playing||cancellation.ElapsedMilliseconds>500)throw new Exception("Infinite image search cancellation failed");
+    down=2;up=2;
     await Simple(10,2,0);if(down!=4||up!=4)throw new Exception("Finite click count failed");
     int before=down;var infinite=Simple(10,0,0);var deadline=Stopwatch.StartNew();while(down==before&&deadline.ElapsedMilliseconds<6000)await Task.Delay(25);Stop();await infinite;if(down<=before||playing)throw new Exception("Infinite clicks or active emergency stop failed");
    }finally{Capture=oldCapture;InputObserved=null;CursorObserved=null;}

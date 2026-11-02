@@ -34,14 +34,14 @@ public partial class MainWindow : Window {
  }
  IntPtr WindowMessage(IntPtr hwnd,int msg,IntPtr w,IntPtr l,ref bool handled){if(msg==0x312){handled=true;switch(w.ToInt32()){case 1:engine.ToggleRecord();break;case 2:_=StartCurrent();break;case 3:engine.Stop();break;}}return IntPtr.Zero;}
  void RefreshState(){bool idle=!engine.Playing&&!engine.Recording;
-  foreach(UIElement c in new UIElement[]{clickMinutes,clickSeconds,clickInterval,clickRepeats,clickButton,startClicks,repeats,speed,pasteImage,chooseArea,chooseClick,limitArea,fixedClick,clear})c.IsEnabled=idle;
+  foreach(UIElement c in new UIElement[]{clickMinutes,clickSeconds,clickInterval,clickRepeats,clickButton,startClicks,repeats,speed,imageRepeats,imageFrequency,pasteImage,chooseArea,chooseClick,limitArea,fixedClick,clear})c.IsEnabled=idle;
   play.IsEnabled=idle&&engine.Count>0;findImage.IsEnabled=idle&&targetImage!=null;stopClicks.IsEnabled=engine.Playing;record.IsEnabled=!engine.Playing&&captureReady;
   record.Content=engine.Recording?"Finish · F8":"Record · F8";count.Text=engine.Count+" input events recorded";
  }
  async Task StartCurrent(){if(engine.Playing||engine.Recording)return;
   try{try{SaveSettings();}catch(IOException){}catch(UnauthorizedAccessException){}catch(ArgumentException){}if(selectedPage==0){int interval=checked((int)(clickMinutes.Value*60000+clickSeconds.Value*1000+clickInterval.Value));if(interval<1)throw new ArgumentException("Set an interval of at least 1 millisecond.");await engine.Simple(interval,(int)clickRepeats.Value,clickButton.SelectedIndex);}
    else if(selectedPage==1)await engine.Playback((int)repeats.Value,(double)speed.Value);
-   else {if(targetImage==null){status.Text="Copy an image first, then choose Paste image.";return;}if(fixedClick.IsChecked==true&&!clickPoint.HasValue)throw new ArgumentException("Choose a fixed click position first.");if(limitArea.IsChecked==true&&!searchArea.HasValue)throw new ArgumentException("Choose a search area first.");if(fixedClick.IsChecked==true&&!System.Windows.Forms.Screen.AllScreens.Any(s=>s.Bounds.Contains(clickPoint.Value)))throw new ArgumentException("Click position is off screen. Choose it again.");using(var template=new Drawing.Bitmap(targetImage)){await engine.Search(template,limitArea.IsChecked==true?searchArea:null,fixedClick.IsChecked==true?clickPoint:null,()=>WindowState=WindowState.Minimized);}}
+   else {if(targetImage==null){status.Text="Copy an image first, then choose Paste image.";return;}if(fixedClick.IsChecked==true&&!clickPoint.HasValue)throw new ArgumentException("Choose a fixed click position first.");if(limitArea.IsChecked==true&&!searchArea.HasValue)throw new ArgumentException("Choose a search area first.");if(fixedClick.IsChecked==true&&!System.Windows.Forms.Screen.AllScreens.Any(s=>s.Bounds.Contains(clickPoint.Value)))throw new ArgumentException("Click position is off screen. Choose it again.");using(var template=new Drawing.Bitmap(targetImage)){await engine.Search(template,limitArea.IsChecked==true?searchArea:null,fixedClick.IsChecked==true?clickPoint:null,()=>WindowState=WindowState.Minimized,(int)imageRepeats.Value,checked((int)(imageFrequency.Value*1000)));}}
   }catch(Exception ex){status.Text=ex.Message;}
  }
  async void Start(object sender,RoutedEventArgs e){await StartCurrent();}

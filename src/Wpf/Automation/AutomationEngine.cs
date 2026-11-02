@@ -16,6 +16,23 @@ partial class AutomationEngine : IDisposable {
  async Task Run(Func<Task> action){if(recording||playing)return;playing=true;stop=false;Changed?.Invoke();try{if(await Countdown())await action();if(stop)Report("Stopped — inputs released");}catch(Exception ex){Report("Automation failed: "+ex.Message);}finally{ReleaseInputs();playing=false;Changed?.Invoke();}}
  public Task Simple(int interval,int total,int button){return Run(async()=>{uint down=button==1?8u:button==2?32u:button>=3?0x80u:2u;uint data=button>=3?(uint)(button-2):0;long completed=0;while(!stop&&(total==0||completed<total)){mouse_event(down,0,0,data,UIntPtr.Zero);mouse_event(down*2,0,0,data,UIntPtr.Zero);completed++;Report("Clicks: "+completed+(total==0?" / infinite":" / "+total)+" — F10 stops");if(total!=0&&completed>=total)break;if(!await Wait(interval))break;}if(!stop)Report("Clicking complete");});}
  public Task Playback(int total,double speed){if(events.Count==0)return Task.CompletedTask;return Run(async()=>{for(long r=0;(total==0||r<total)&&!stop;r++){Report("Playing "+(r+1)+" / "+(total==0?"infinite":total.ToString())+" — F10 to stop");var clock=Stopwatch.StartNew();foreach(var a in events){if(!await Wait((long)Math.Round(a.Time/speed)-clock.ElapsedMilliseconds))break;Replay(a);}ReleaseInputs();if(total==0||r+1<total)await Wait(250);}if(!stop)Report("Playback complete");});}
- public Task Search(Bitmap template,Rectangle? area,Point? click,Action minimize){return Run(async()=>{minimize();if(!await Wait(350))return;Report("Searching until image is found — F10 cancels");while(!stop){Point? match=await Task.Run(()=>FindOnScreens(template,area));if(stop)break;if(match.HasValue){Point p=click??match.Value;SetCursorPos(p.X,p.Y);mouse_event(2,0,0,0,UIntPtr.Zero);mouse_event(4,0,0,0,UIntPtr.Zero);Report("Image found and clicked.");return;}await Wait(500);}});}
+ public Task Search(Bitmap template,Rectangle? area,Point? click,Action minimize,int total=1,int interval=500){
+  if(total<0)throw new ArgumentOutOfRangeException(nameof(total));
+  if(interval<1)throw new ArgumentOutOfRangeException(nameof(interval));
+  return Run(async()=>{
+   minimize();if(!await Wait(350))return;
+   long completed=0;
+   while(!stop&&(total==0||completed<total)){
+    Report("Searching - clicks: "+completed+" / "+(total==0?"infinite":total.ToString())+" - F10 cancels");
+    Point? match=await Task.Run(()=>FindOnScreens(template,area));if(stop)break;
+    if(match.HasValue){
+     Point p=click??match.Value;SetCursorPos(p.X,p.Y);mouse_event(2,0,0,0,UIntPtr.Zero);mouse_event(4,0,0,0,UIntPtr.Zero);completed++;
+     if(total!=0&&completed>=total)break;
+    }
+    if(!await Wait(interval))break;
+   }
+   if(!stop)Report("Image search complete - clicks: "+completed);
+  });
+ }
  public void Dispose(){Stop();UnhookWindowsHookEx(mouseHook);UnhookWindowsHookEx(keyHook);}
 }}
